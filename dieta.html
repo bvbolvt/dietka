@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Plan 2300 kcal</title>
+    <style>
+        :root {
+            /* Zmienne kolorów - Light Mode */
+            --primary: #fca311;
+            --bg-body: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1c1c1e;
+            --text-sec: #6c6c70;
+            --border: #e5e5ea;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --summary-bg: #f2f2f7;
+            --ing-border: #f5f5f7;
+        }
+
+        /* Zmienne kolorów - Dark Mode */
+        [data-theme="dark"] {
+            --primary: #ffd60a;
+            --bg-body: #000000;
+            --bg-card: #1c1c1e;
+            --text-main: #ffffff;
+            --text-sec: #aeaeb2;
+            --border: #38383a;
+            --nav-bg: rgba(28, 28, 30, 0.95);
+            --summary-bg: #2c2c2e;
+            --ing-border: #2c2c2e;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 100px;
+            padding-top: 60px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* GÓRNY PASEK */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            padding-top: env(safe-area-inset-top);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .app-title { font-size: 17px; font-weight: 600; }
+        .theme-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 5px; }
+
+        /* PASEK DNI */
+        .days-nav {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 15px;
+            z-index: 900;
+            border-bottom: 1px solid var(--border);
+            scrollbar-width: none;
+        }
+        .days-nav::-webkit-scrollbar { display: none; }
+
+        .days-nav button {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-sec);
+            padding: 8px 16px;
+            white-space: nowrap;
+            border-radius: 20px;
+            transition: all 0.2s;
+            margin-right: 5px;
+        }
+
+        .days-nav button.active {
+            background-color: var(--text-main);
+            color: var(--bg-body);
+        }
+
+        /* GŁÓWNY KONTENER */
+        .container {
+            padding: 60px 20px 20px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* KARTY POSIŁKÓW */
+        .meal-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .meal-time {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        .meal-macros-top {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sec);
+        }
+
+        .meal-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .content-grid { display: flex; flex-direction: column; gap: 15px; }
+
+        /* POPRAWIONA LISTA SKŁADNIKÓW (KAŻDY W NOWEJ LINII) */
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ing-item {
+            display: block;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 6px 0;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--ing-border);
+        }
+        .ing-item:last-child { border-bottom: none; }
+
+        /* INSTRUKCJE */
+        .instructions {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-sec);
+            padding-top: 10px;
+            border-top: 2px dashed var(--border);
+        }
+        .instructions ol { padding-left: 18px; margin: 5px 0; }
+        .instructions li { margin-bottom: 8px; }
+
+        /* PODSUMOWANIE DNIA */
+        .day-summary {
+            background-color: var(--summary-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary);
+        }
+        .sum-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sec); margin-bottom: 5px; display: block; }
+        .sum-values { font-size: 15px; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
+
+        /* ZAKUPY */
+        .shop-group { margin-bottom: 25px; }
+        .shop-header {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .shop-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+            transition: opacity 0.3s, transform 0.3s; /* Animacja znikania */
+        }
+        .shop-item input {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        .shop-item label {
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Klasa ukrywająca produkt */
+        .shop-item.hidden-item {
+            display: none;
+        }
+
+        .btn-reset {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* UKRYWANIE */
+        .tab-content, .view-section { display: none; }
+        .tab-content.active, .view-section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* DOLNE MENU */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding-top: 10px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            z-index: 1000;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-sec);
+            font-size: 10px;
+            font-weight: 600;
+            gap: 4px;
+        }
+        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-btn.active { color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="app-title">Dieta 2300 kcal</div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeIcon">🌙</button>
+    </div>
+
+    <div id="daysNav" class="days-nav">
+        <button onclick="openDay('pon')" class="active" id="btn-pon">Pon</button>
+        <button onclick="openDay('wt')" id="btn-wt">Wt</button>
+        <button onclick="openDay('sr')" id="btn-sr">Śr</button>
+        <button onclick="openDay('czw')" id="btn-czw">Czw</button>
+        <button onclick="openDay('pt')" id="btn-pt">Pt</button>
+        <button onclick="openDay('sob')" id="btn-sob">Sob</button>
+        <button onclick="openDay('nd')" id="btn-nd">Nd</button>
+    </div>
+
+    <div class="container">
+
+        <div id="view-diet" class="view-section active">
+
+            <div id="day-pon" class="tab-content active">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:724 B:48 T:24 W:81</span></div>
+                    <div class="meal-title">KANAPKI Z HUMMUSEM LIGHT</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 90 g (6 x Plasterek)</div>
+                            <div class="ing-item">Hummus - 70 g (7 x Łyżeczka)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
+                            <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol><li>Z podanych składników przygotować kanapki.</li></ol>
+                            <small>Sugerowane przyprawy: pieprz, natka pietruszki, szczypiorek.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:715 B:62 T:19 W:73</span></div>
+                    <div class="meal-title">MAKARON W SOSIE SZPINAKOWYM</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 200 g (2 x Kawałek)</div>
+                            <div class="ing-item">Szpinak, mrożony - 150 g (1.5 x Garść)</div>
+                            <div class="ing-item">Makaron pełnoziarnisty - 90 g (ok. 1.3 x Szklanka)</div>
+                            <div class="ing-item">Śmietana, 12% tłuszczu - 70 g (3.5 x Łyżka)</div>
+                            <div class="ing-item">Papryka czerwona - 70 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Makaron ugotować al dente.</li>
+                                <li>Mięso doprawić, pokroić na kawałki i usmażyć na oliwie z czosnkiem.</li>
+                                <li>Dodać szpinak, chwilę poddusić, zalać śmietaną, doprawić.</li>
+                            </ol>
+                            <small>Sugerowane przyprawy: gałka muszkatołowa, zioła prowansalskie, pieprz.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:790 B:54 T:23 W:90</span></div>
+                    <div class="meal-title">SZEJK A'LA SNICKERS (LIGHT)</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
+                            <div class="ing-item">Banan - 180 g (1.5 x Duża Sztuka)</div>
+                            <div class="ing-item">Masło orzechowe - 25 g (1 x Czubata Łyżeczka)</div>
+                            <div class="ing-item">Odżywka białkowa - WPC - 40 g (1.3 x Miarka)</div>
+                            <div class="ing-item">Kakao (proszek 11%) - 10 g (1 x Łyżka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Zmiksować wszystkie składniki.</li></ol></div>
+                    </div>
+                </div>
+
+                <div class="day-summary">
+                    <span class="sum-title">PODSUMOWANIE DNIA</span>
+                    <div class="sum-values">SUMA: K: 2230 | B: 164 | T: 66 | W: 244</div>
+                </div>
+            </div>
+
+            <div id="day-wt" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:48 T:18 W:98</span></div>
+                    <div class="meal-title">JAGLANKA OWOCOWA</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 300 g (1.2 x Szklanka)</div>
+                            <div class="ing-item">Maliny, mrożone - 150 g (0.3 x Opakowanie)</div>
+                            <div class="ing-item">Banan - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Płatki jaglane - 50 g (5 x Łyżka)</div>
+                            <div class="ing-item">Odżywka białkowa - WPC - 40 g (1.3 x Miarka)</div>
+                            <div class="ing-item">Orzechy włoskie - 10 g (3 x Połówka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Płatki przepłukać gorącą wodą, następnie ugotować na mleku.</li><li>Dodać resztę składników.</li></ol></div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:705 B:64 T:18 W:75</span></div>
+                    <div class="meal-title">KOTLETY Z PIECA + DESER</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
+                            <div class="ing-item">Chude mięso mielone z szynki - 150 g (0.3 x Opakowanie)</div>
+                            <div class="ing-item">Fasolka szparagowa, mrożona - 150 g (0.3 x Opakowanie)</div>
+                            <div class="ing-item">Cukinia - 100 g (0.3 x Sztuka)</div>
+                            <div class="ing-item">Cebula - 50 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Marchew - 45 g (1 x Sztuka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Deser: Jogurt Vitanella 250g (1 x Opakowanie)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ziemniaki ugotować lub pokroić w łódeczki i upiec (ok. 40 min w 180 st. C).</li>
+                                <li>Mięso wymieszać ze startymi warzywami(cukinia i marchew)i posiekaną cebulką.</li>
+                                <li>Kotlety usmażyć na oliwie lub upiec w piekarniku skropione oliwą (ok. 30 min 180 st. C - obrócić w połowie pieczenia).</li>
+                                <li>Podawać z gotowanymi warzywami.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:760 B:57 T:24 W:78</span></div>
+                    <div class="meal-title">KANAPKI Z SERKIEM WIEJSKIM</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Serek wiejski bez laktozy - 200 g (1 x Sztuka)</div>
+                            <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
+                            <div class="ing-item">Hummus - 45 g (4.5 x Łyżeczka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 90 g (6 x Plasterek)</div>
+                            <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
+                            <div class="ing-item">Szczypiorek - 5 g (1 x Łyżeczka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Pieczywo posmaruj hummusem i połóż na nim szynkę.</li><li>Do serka dodaj posiekane warzywa.</li></ol></div>
+                    </div>
+                </div>
+
+                <div class="day-summary">
+                    <span class="sum-title">PODSUMOWANIE DNIA</span>
+                    <div class="sum-values">SUMA: K: 2205 | B: 169 | T: 60 | W: 251</div>
+                </div>
+            </div>
+
+            <div id="day-sr" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:42 T:24 W:82</span></div>
+                    <div class="meal-title">JAGLANKA RAFFAELLO</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
+                            <div class="ing-item">Maliny, mrożone - 150 g (0.3 x Opakowanie)</div>
+                            <div class="ing-item">Płatki jaglane - 50 g (5 x Łyżka)</div>
+                            <div class="ing-item">Odżywka białkowa - WPC - 30 g (1 x Miarka)</div>
+                            <div class="ing-item">Migdały - 15 g (1 x Łyżka)</div>
+                            <div class="ing-item">Wiórki kokosowe - 5 g (1 x Łyżeczka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Płatki ugotować na mleku (można dolać wody według uznania).</li>
+                                <li>Zdjąć z ognia i wymieszać z połową wiórków kokosowych i migdałów.</li>
+                                <li>Posypać resztą migdałów i wiórków oraz malinami.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:810 B:69 T:12 W:105</span></div>
+                    <div class="meal-title">BURRITO BOWL</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Pomidory z puszki (krojone) - 400 g (4 x Porcja)</div>
+                            <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 250 g (2.5 x Kawałek)</div>
+                            <div class="ing-item">Fasola czerwona w zalewie (konserwowa) - 120 g (6 x Łyżka)</div>
+                            <div class="ing-item">Cebula - 100 g (1 x Sztuka)</div>
+                            <div class="ing-item">Ryż basmati - 70 g (5 x Łyżka)</div>
+                            <div class="ing-item">Papryka czerwona - 70 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ugotować ryż zgodnie z instrukcją na opakowaniu.</li>
+                                <li>Podsmażyć pokrojone mięso oraz cebulę na oliwie. Po kilku minutach dodać warzywa. Poddusić i doprawić.</li>
+                                <li>Potrawkę podać z ryżem.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:720 B:50 T:20 W:85</span></div>
+                    <div class="meal-title">KANAPKI PESTO</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 60 g (4 x Plasterek)</div>
+                            <div class="ing-item">Pesto zielone z bazylii - 20 g (1 x Łyżka)</div>
+                            <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
+                            <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
+                    </div>
+                </div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2240 | B: 161 | T: 56 | W: 272</div>
+                </div>
+            </div>
+
+            <div id="day-czw" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:750 B:48 T:25 W:85</span></div>
+                    <div class="meal-title">OMLET PEŁNOZIARNISTY</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Pomidor - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Jaja kurze całe - 112 g (2 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 75 g (5 x Plasterek)</div>
+                            <div class="ing-item">Mąka pszenna pełnoziarnista - 40 g (2.5 x Łyżka)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Cebula - 50 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Keczup - 15 g (1 x Łyżka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Przekąska: Winogrona 200g, Banan 1szt</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Jaja wymieszać z mąką, doprawić według preferencji.</li>
+                                <li>Na oliwie podsmażyć cebulę oraz szynkę.</li>
+                                <li>Następnie wylać jajka na patelnię, dodać mozzarellę i usmażyć.</li>
+                                <li>Omleta podawać z keczupem i warzywami.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:780 B:68 T:20 W:80</span></div>
+                    <div class="meal-title">MAKARON PESTO</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 250 g (2.5 x Kawałek)</div>
+                            <div class="ing-item">Makaron pełnoziarnisty - 80 g (1.1 x Szklanka)</div>
+                            <div class="ing-item">Ogórek zielony (długi) - 90 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Rzodkiewka - 45 g (3 x Sztuka)</div>
+                            <div class="ing-item">Pesto zielone z bazylii - 25 g (1 x Solidna Łyżka)</div>
+                            <div class="ing-item">MIX sałat - 40 g (0.3 x Opakowanie)</div>
+                            <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Makaron ugotować al dente.</li>
+                                <li>Mięso pokroić na kawałki, doprawić i usmażyć na oliwie.</li>
+                                <li>Dodać makaron i wymieszać całość z pesto.</li>
+                                <li>Podawać z sałatą ze świeżych warzyw.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:730 B:55 T:18 W:85</span></div>
+                    <div class="meal-title">SZEJK CZEKOLADOWY (BEZ KAWY)</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
+                            <div class="ing-item">Banan - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Skyr naturalny, jogurt typu islandzkiego - 150 g (1 x Sztuka)</div>
+                            <div class="ing-item">Czekolada gorzka - 20 g (3 x Kostka)</div>
+                            <div class="ing-item">Odżywka białkowa - WPC - 30 g (1 x Miarka)</div>
+                            <div class="ing-item">Kakao (proszek 11%) - 10 g (1 x Łyżka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Zmiksować wszystkie składniki.</li></ol></div>
+                    </div>
+                </div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2260 | B: 171 | T: 63 | W: 250</div>
+                </div>
+            </div>
+
+            <div id="day-pt" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:720 B:40 T:18 W:100</span></div>
+                    <div class="meal-title">JAGLANKA TRUSKAWKOWA</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
+                            <div class="ing-item">Truskawki, mrożone - 150 g (1.5 x Szklanka)</div>
+                            <div class="ing-item">Banan - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Płatki jaglane. - 50 g (5 x Łyżka)</div>
+                            <div class="ing-item">Odżywka białkowa - WPC - 30 g (1 x Miarka)</div>
+                            <div class="ing-item">Orzechy włoskie - 10 g (1.3 x Łyżka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Płatki ugotować na mleku (można dolać wody według uznania).</li>
+                                <li>Dodać resztę składników.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:760 B:75 T:18 W:75</span></div>
+                    <div class="meal-title">ŁOSOŚ Z PIECA + DESER</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
+                            <div class="ing-item">Ogórek zielony (długi) - 180 g (1 x Sztuka)</div>
+                            <div class="ing-item">Łosoś, świeży - 150 g (1.5 x Kawałek)</div>
+                            <div class="ing-item">Skyr naturalny, jogurt typu islandzkiego - 150 g (1 x Sztuka)</div>
+                            <div class="ing-item">Deser: Jogurt proteinowy Vitanella (Biedronka) - 250 g</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Rybę przyprawić (można skropić sokiem z cytryny), upiec w zamkniętym naczyniu lub w folii (ok. 20 min w 180 st. C).</li>
+                                <li>Ziemniaki ugotować lub pokroić w łódeczki i upiec (ok. 40 min w 180 st. C).</li>
+                                <li>Podawać z mizerią z ogórka i jogurtu.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:780 B:48 T:22 W:95</span></div>
+                    <div class="meal-title">KANAPKI PESTO</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 90 g (6 x Plasterek)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Pesto zielone z bazylii - 25 g (1 x Solidna Łyżka)</div>
+                            <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
+                            <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
+                    </div>
+                </div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2260 | B: 163 | T: 58 | W: 270</div>
+                </div>
+            </div>
+
+            <div id="day-sob" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:45 T:24 W:80</span></div>
+                    <div class="meal-title">TOSTY + ORZECHY</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Chleb żytni razowy - 120 g (4 x Kromka)</div>
+                            <div class="ing-item">Mozzarella light - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Papryka czerwona - 70 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 60 g (4 x Plasterek)</div>
+                            <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
+                            <div class="ing-item">Keczup - 20 g (1.3 x Łyżka)</div>
+                            <div class="ing-item">Przekąska: Orzechy włoskie - 20 g (1.3 x Łyżka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Przygotować tosty z podanych składników.</li></ol></div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:820 B:62 T:15 W:110</span></div>
+                    <div class="meal-title">POLĘDWICZKA Z KASZĄ</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Jabłko - 150 g (1 x Sztuka)</div>
+                            <div class="ing-item">Polędwica wieprzowa (surowa) - 150 g (1.5 x Kawałek)</div>
+                            <div class="ing-item">Kasza jaglana - 70 g (5.5 x Łyżka)</div>
+                            <div class="ing-item">Marchew - 90 g (2 x Sztuka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Deser: Jogurt proteinowy Vitanella - 250 g</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Kaszę ugotować zgodnie z instrukcją na opakowaniu.</li>
+                                <li>Mięso pokroić w plastry i delikatnie spłaszczyć je dłonią, doprawić, usmażyć na oliwie lub upiec w piekarniku skropione oliwą.</li>
+                                <li>Podawać z surówką z tartej marchewki z jabłkiem.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:750 B:45 T:22 W:95</span></div>
+                    <div class="meal-title">KANAPKI HUMMUS</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
+                            <div class="ing-item">Hummus - 50 g (5 x Łyżeczka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 60 g (4 x Plasterek)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
+                            <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
+                        </div>
+                        <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
+                    </div>
+                </div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2280 | B: 152 | T: 61 | W: 285</div>
+                </div>
+            </div>
+
+            <div id="day-nd" class="tab-content">
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:55 T:24 W:75</span></div>
+                    <div class="meal-title">SZAKSZUKA + SKYR</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Pomidor - 240 g (2 x Sztuka)</div>
+                            <div class="ing-item">Bułki grahamki - 65 g (1 x Sztuka)</div>
+                            <div class="ing-item">Jaja kurze całe - 112 g (2 x Sztuka)</div>
+                            <div class="ing-item">Szynka z piersi kurczaka - 60 g (4 x Plasterek)</div>
+                            <div class="ing-item">Mozzarella light - 60 g (0.5 x Sztuka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
+                            <div class="ing-item">Przekąska: Skyr owocowy 150g (1 x Sztuka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Na oliwie podsmażyć czosnek i szynkę.</li>
+                                <li>Dorzucić pomidory.</li>
+                                <li>Wbić jajka i dodać pokrojoną mozarellę i smażyć, dopóki się nie zetną (szybciej będzie pod przykryciem).</li>
+                                <li>Doprawić i podawać z resztą składników.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:690 B:45 T:10 W:105</span></div>
+                    <div class="meal-title">CHIŃSZCZYZNA LIGHT</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 180 g (1.8 x Kawałek)</div>
+                            <div class="ing-item">Warzywa na patelnię chińskie - 150 g (1.5 x Porcja)</div>
+                            <div class="ing-item">Ryż basmati - 70 g (5 x Łyżka)</div>
+                            <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
+                            <div class="ing-item">Sos sojowy ciemny - 10 g (1 x Łyżka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ryż ugotować zgodnie z zaleceniami producenta.</li>
+                                <li>Na oliwie podsmażyć mięso. Dodać mieszankę warzyw.</li>
+                                <li>Połączyć wszystkie składniki.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="meal-card">
+                    <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:850 B:75 T:20 W:95</span></div>
+                    <div class="meal-title">DESER KAKAOWY (BEZ KAWY)</div>
+                    <div class="content-grid">
+                        <div class="ingredients-list">
+                            <div class="ing-item">Ser twarogowy chudy - 250 g (1.2 x Opakowanie)</div>
+                            <div class="ing-item">Skyr waniliowy - 150 g (1 x Sztuka)</div>
+                            <div class="ing-item">Banan - 120 g (1 x Sztuka)</div>
+                            <div class="ing-item">Biszkopty - 40 g (8 x Sztuka)</div>
+                            <div class="ing-item">Orzechy włoskie - 15 g (1 x Łyżka)</div>
+                            <div class="ing-item">Kakao (proszek 11%) - 10 g (1 x Łyżka)</div>
+                        </div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Twaróg zmiksować z jogurtem. Można dodać słodzik.</li>
+                                <li>Masę twarogową przekładać biszkoptami zamoczonymi w mleku z kakao.</li>
+                                <li>Na górze posypać kakao, zjeść z owocami i orzechami.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2280 | B: 175 | T: 54 | W: 275</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="view-shopping" class="view-section">
+            
+            <div class="shop-group">
+                <div class="shop-header">Warzywa i Owoce</div>
+                <div class="shop-item"><label><input type="checkbox"><span>Banany (ok. 1 kg - 8-9 sztuk)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Maliny mrożone (450-500g - 1 duże opakowanie)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Truskawki mrożone (150g - pół opakowania)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Szpinak mrożony (150g - 1/3 opakowania)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Fasolka szparagowa mrożona (150g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mieszanka chińska mrożona (150g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Ziemniaki (1.5 kg)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Pomidory w puszce (400g - 1 puszka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Pomidory świeże (ok. 5 sztuk)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Papryka czerwona (3 sztuki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Ogórek zielony długi (2 sztuki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Marchew (4-5 sztuk)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Cebula (4 sztuki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Czosnek (1 główka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Cukinia (1 mała sztuka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mix sałat (1 duże opakowanie)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Rzodkiewka (2 pęczki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Szczypiorek (1 pęczek)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Jabłka (2 sztuki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Winogrona (200g - mała kiść)</span></label></div>
+            </div>
+
+            <div class="shop-group">
+                <div class="shop-header">Mięso i Ryby</div>
+                <div class="shop-item"><label><input type="checkbox"><span>Pierś z kurczaka (ok. 900g - 1kg)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Szynka z piersi kurczaka (700g - duża paczka rodzinna)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mięso mielone z szynki chude (150g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Polędwica wieprzowa (150g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Łosoś świeży filet (150g)</span></label></div>
+            </div>
+
+            <div class="shop-group">
+                <div class="shop-header">Nabiał i Jaja</div>
+                <div class="shop-item"><label><input type="checkbox"><span>Jaja (4 sztuki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mleko bezlaktozowe 1.5% (2 litry)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mozzarella light (4 kulki po 120g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Serek wiejski bez laktozy (2 opakowania po 200g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Twaróg chudy (250g - 1 kostka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Skyr naturalny (300g - 2 kubeczki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Skyr owocowy (150g - 1 kubeczek)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Skyr waniliowy (150g - 1 kubeczek)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Jogurt Proteinowy Vitanella (750g - 3 opakowania)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Śmietana 12% (mały kubek - zużyjesz 70g)</span></label></div>
+            </div>
+
+            <div class="shop-group">
+                <div class="shop-header">Produkty Zbożowe</div>
+                <div class="shop-item"><label><input type="checkbox"><span>Bułki grahamki (11 sztuk)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Chleb żytni razowy (mały - potrzebne tylko 4 kromki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Płatki jaglane (potrzeba ok. 250g - 1 paczka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Kasza jaglana (potrzeba 70g - 1 woreczek)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Ryż basmati (potrzeba ok. 210g - 1 paczka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Makaron pełnoziarnisty (potrzeba 170g - pół paczki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Mąka pełnoziarnista (potrzeba 40g - resztka z domu)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Biszkopty (mała paczka - ok. 40g)</span></label></div>
+            </div>
+
+            <div class="shop-group">
+                <div class="shop-header">Orzechy, Tłuszcze i Inne</div>
+                <div class="shop-item"><label><input type="checkbox"><span>Hummus (ok. 170g - 2 standardowe opakowania)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Pesto zielone (ok. 70g - pół słoiczka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Masło orzechowe (zużyjesz ok. 25g - 1 łyżka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Odżywka białkowa WPC (zużyjesz ok. 170g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Migdały (potrzeba 15g - garstka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Orzechy włoskie (potrzeba 55g - jedna paczka 100g starczy)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Wiórki kokosowe (potrzeba 5g - łyżeczka)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Czekolada gorzka (20g - 3 kostki)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Kakao ciemne (zużyjesz ok. 30g)</span></label></div>
+                <div class="shop-item"><label><input type="checkbox"><span>Fasola czerwona (mała puszka - 120g)</span></label></div>
+            </div>
+
+            <button class="btn-reset" onclick="resetShopping()">Wyczyść zaznaczone</button>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-btn active" id="nav-diet" onclick="openView('diet')">
+            <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+            Dieta
+        </button>
+        <button class="nav-btn" id="nav-shopping" onclick="openView('shopping')">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            Zakupy
+        </button>
+    </div>
+
+    <script>
+        // Logika Dni
+        function openDay(dayId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('day-' + dayId).classList.add('active');
+            
+            document.querySelectorAll('.days-nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById('btn-' + dayId).classList.add('active');
+        }
+
+        // Logika Widoków
+        function openView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + viewName).classList.add('active');
+
+            const daysNav = document.getElementById('daysNav');
+            daysNav.style.display = (viewName === 'diet') ? 'flex' : 'none';
+        }
+
+        // Dark Mode
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Inicjalizacja
+        window.addEventListener('DOMContentLoaded', () => {
+            // Theme Persistence
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').innerText = '☀️';
+            }
+
+            // Shopping List Persistence
+            document.querySelectorAll('.shop-item input').forEach((chk, idx) => {
+                const id = 'shop_' + idx;
+                chk.checked = localStorage.getItem(id) === 'true';
+                if(chk.checked) chk.closest('.shop-item').classList.add('hidden-item');
+
+                chk.addEventListener('change', function() {
+                    localStorage.setItem(id, this.checked);
+                    const item = this.closest('.shop-item');
+                    if(this.checked) {
+                        setTimeout(() => item.classList.add('hidden-item'), 400); // Małe opóźnienie dla efektu
+                    } else {
+                        item.classList.remove('hidden-item');
+                    }
+                });
+            });
+        });
+
+        function resetShopping() {
+            if(confirm("Wyczyścić listę?")) {
+                document.querySelectorAll('.shop-item input').forEach((chk, idx) => {
+                    chk.checked = false;
+                    chk.closest('.shop-item').classList.remove('hidden-item');
+                    localStorage.removeItem('shop_' + idx);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
