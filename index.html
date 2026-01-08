@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1">
     <title>Plan 2300 kcal</title>
+    
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dieta">
+    
     <style>
         :root {
             /* Zmienne kolorów - Light Mode */
@@ -162,6 +165,17 @@
             text-transform: uppercase;
         }
 
+        /* ----- STYL ZDJĘĆ ----- */
+        .meal-photo {
+            width: 100%;
+            height: 220px; /* Stała wysokość zdjęcia */
+            object-fit: cover; /* Ładne wypełnienie */
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
         .content-grid { display: flex; flex-direction: column; gap: 15px; }
 
         /* POPRAWIONA LISTA SKŁADNIKÓW (KAŻDY W NOWEJ LINII) */
@@ -312,6 +326,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:724 B:48 T:24 W:81</span></div>
                     <div class="meal-title">KANAPKI Z HUMMUSEM LIGHT</div>
+                    
+                    <img src="pn1.png" class="meal-photo" alt="Śniadanie Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -331,6 +348,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:715 B:62 T:19 W:73</span></div>
                     <div class="meal-title">MAKARON W SOSIE SZPINAKOWYM</div>
+                    
+                    <img src="pn2.png" class="meal-photo" alt="Obiad Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 200 g (2 x Kawałek)</div>
@@ -355,6 +375,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:790 B:54 T:23 W:90</span></div>
                     <div class="meal-title">SZEJK A'LA SNICKERS (LIGHT)</div>
+                    
+                    <img src="pn3.png" class="meal-photo" alt="Kolacja Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
@@ -377,6 +400,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:48 T:18 W:98</span></div>
                     <div class="meal-title">JAGLANKA OWOCOWA</div>
+                    
+                    <img src="wt1.png" class="meal-photo" alt="Śniadanie Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 300 g (1.2 x Szklanka)</div>
@@ -393,6 +419,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:705 B:64 T:18 W:75</span></div>
                     <div class="meal-title">KOTLETY Z PIECA + DESER</div>
+                    
+                    <img src="wt2.png" class="meal-photo" alt="Obiad Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
@@ -418,6 +447,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:760 B:57 T:24 W:78</span></div>
                     <div class="meal-title">KANAPKI Z SERKIEM WIEJSKIM</div>
+                    
+                    <img src="wt3.png" class="meal-photo" alt="Kolacja Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Serek wiejski bez laktozy - 200 g (1 x Sztuka)</div>
@@ -441,6 +473,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:42 T:24 W:82</span></div>
                     <div class="meal-title">JAGLANKA RAFFAELLO</div>
+                    
+                    <img src="sr1.png" class="meal-photo" alt="Śniadanie Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
@@ -462,6 +497,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:810 B:69 T:12 W:105</span></div>
                     <div class="meal-title">BURRITO BOWL</div>
+                    
+                    <img src="sr2.png" class="meal-photo" alt="Obiad Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidory z puszki (krojone) - 400 g (4 x Porcja)</div>
@@ -484,6 +522,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:720 B:50 T:20 W:85</span></div>
                     <div class="meal-title">KANAPKI PESTO</div>
+                    
+                    <img src="sr3.png" class="meal-photo" alt="Kolacja Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -505,6 +546,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:750 B:48 T:25 W:85</span></div>
                     <div class="meal-title">OMLET PEŁNOZIARNISTY</div>
+                    
+                    <img src="cz1.png" class="meal-photo" alt="Śniadanie Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidor - 120 g (1 x Sztuka)</div>
@@ -530,6 +574,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:780 B:68 T:20 W:80</span></div>
                     <div class="meal-title">MAKARON PESTO</div>
+                    
+                    <img src="cz2.png" class="meal-photo" alt="Obiad Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 250 g (2.5 x Kawałek)</div>
@@ -554,6 +601,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:730 B:55 T:18 W:85</span></div>
                     <div class="meal-title">SZEJK CZEKOLADOWY (BEZ KAWY)</div>
+                    
+                    <img src="cz3.png" class="meal-photo" alt="Kolacja Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
@@ -575,6 +625,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:720 B:40 T:18 W:100</span></div>
                     <div class="meal-title">JAGLANKA TRUSKAWKOWA</div>
+                    
+                    <img src="pt1.png" class="meal-photo" alt="Śniadanie Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
@@ -595,6 +648,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:760 B:75 T:18 W:75</span></div>
                     <div class="meal-title">ŁOSOŚ Z PIECA + DESER</div>
+                    
+                    <img src="pt2.png" class="meal-photo" alt="Obiad Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
@@ -615,6 +671,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:780 B:48 T:22 W:95</span></div>
                     <div class="meal-title">KANAPKI PESTO</div>
+                    
+                    <img src="pt3.png" class="meal-photo" alt="Kolacja Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -636,6 +695,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:45 T:24 W:80</span></div>
                     <div class="meal-title">TOSTY + ORZECHY</div>
+                    
+                    <img src="sb1.png" class="meal-photo" alt="Śniadanie Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Chleb żytni razowy - 120 g (4 x Kromka)</div>
@@ -652,6 +714,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:820 B:62 T:15 W:110</span></div>
                     <div class="meal-title">POLĘDWICZKA Z KASZĄ</div>
+                    
+                    <img src="sb2.png" class="meal-photo" alt="Obiad Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Jabłko - 150 g (1 x Sztuka)</div>
@@ -673,6 +738,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:750 B:45 T:22 W:95</span></div>
                     <div class="meal-title">KANAPKI HUMMUS</div>
+                    
+                    <img src="sb3.png" class="meal-photo" alt="Kolacja Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -694,6 +762,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:55 T:24 W:75</span></div>
                     <div class="meal-title">SZAKSZUKA + SKYR</div>
+                    
+                    <img src="nd1.png" class="meal-photo" alt="Śniadanie Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidor - 240 g (2 x Sztuka)</div>
@@ -718,6 +789,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:690 B:45 T:10 W:105</span></div>
                     <div class="meal-title">CHIŃSZCZYZNA LIGHT</div>
+                    
+                    <img src="nd2.png" class="meal-photo" alt="Obiad Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 180 g (1.8 x Kawałek)</div>
@@ -738,6 +812,9 @@
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:850 B:75 T:20 W:95</span></div>
                     <div class="meal-title">DESER KAKAOWY (BEZ KAWY)</div>
+                    
+                    <img src="nd3.png" class="meal-photo" alt="Kolacja Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ser twarogowy chudy - 250 g (1.2 x Opakowanie)</div>
@@ -929,5 +1006,3 @@
     </script>
 </body>
 </html>
-
-
