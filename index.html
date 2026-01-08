@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Plan 2300 kcal</title>
     
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dieta">
-
-    <title>Plan 2300 kcal</title>
+    
     <style>
         :root {
+            /* Zmienne kolorów - Light Mode */
             --primary: #fca311;
             --bg-body: #ffffff;
             --bg-card: #ffffff;
@@ -24,6 +25,7 @@
             --ing-border: #f5f5f7;
         }
 
+        /* Zmienne kolorów - Dark Mode */
         [data-theme="dark"] {
             --primary: #ffd60a;
             --bg-body: #000000;
@@ -45,142 +47,259 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             padding-bottom: 100px;
-            padding-top: env(safe-area-inset-top);
+            /* Usunięty stary padding-top, teraz reguluje to kontener */
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* GÓRNY PASEK */
+        /* GÓRNY PASEK - POPRAWIONY */
         .top-bar {
             position: fixed;
-            top: 0; left: 0; right: 0;
-            height: calc(50px + env(safe-area-inset-top));
+            top: 0;
+            left: 0;
+            right: 0;
+            /* Wysokość dostosowuje się do Notcha/Wyspy */
+            height: calc(50px + env(safe-area-inset-top)); 
             padding-top: env(safe-area-inset-top);
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-end; /* Przesuwa ikonę maksymalnie w prawo */
             padding-right: 20px;
+            padding-left: 20px;
             z-index: 1000;
             border-bottom: 1px solid var(--border);
         }
 
-        .theme-toggle { background: none; border: none; font-size: 24px; cursor: pointer; padding: 10px; }
+        .theme-toggle { 
+            background: none; 
+            border: none; 
+            font-size: 24px; /* Nieco większa ikona */
+            cursor: pointer; 
+            padding: 10px; 
+        }
 
-        /* PASEK DNI - ZMIENIONY NA PEŁNĄ SZEROKOŚĆ */
+        /* PASEK DNI - POPRAWIONY */
         .days-nav {
             position: fixed;
-            top: calc(50px + env(safe-area-inset-top));
-            left: 0; right: 0;
+            /* Zaczyna się dokładnie pod górnym paskiem */
+            top: calc(50px + env(safe-area-inset-top)); 
+            left: 0;
+            right: 0;
             background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex;
-            justify-content: space-between; /* Rozłożenie równomierne */
-            padding: 10px 5px; /* Małe marginesy boczne */
+            overflow-x: auto;
+            padding: 10px 15px;
             z-index: 900;
             border-bottom: 1px solid var(--border);
+            scrollbar-width: none;
         }
+        .days-nav::-webkit-scrollbar { display: none; }
 
         .days-nav button {
-            background: none; border: none; 
-            font-size: 13px; /* Dopasowana czcionka */
+            background: none;
+            border: none;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--text-sec); 
-            padding: 8px 0; /* Padding tylko góra-dół */
-            flex: 1; /* Każdy przycisk zajmuje tyle samo miejsca */
-            text-align: center;
-            border-radius: 8px; 
-            margin: 0 2px; /* Minimalny odstęp między przyciskami */
+            color: var(--text-sec);
+            padding: 8px 16px;
+            white-space: nowrap;
+            border-radius: 20px;
+            transition: all 0.2s;
+            margin-right: 5px;
         }
 
-        .days-nav button.active { background-color: var(--text-main); color: var(--bg-body); }
+        .days-nav button.active {
+            background-color: var(--text-main);
+            color: var(--bg-body);
+        }
 
-        /* KONTENER */
+        /* GŁÓWNY KONTENER - POPRAWIONY MARGINES */
         .container {
-            padding: 130px 20px 20px 20px;
+            /* Duży odstęp od góry, żeby treść nie wchodziła pod paski */
+            padding: 130px 20px 20px 20px; 
             max-width: 600px;
             margin: 0 auto;
         }
 
+        /* KARTY POSIŁKÓW */
         .meal-card {
-            background: var(--bg-card); border-radius: 16px; padding: 20px;
-            margin-bottom: 25px; border: 1px solid var(--border);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            overflow: hidden;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
         }
 
         .meal-header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
         }
 
-        .meal-time { font-size: 15px; font-weight: 800; color: var(--primary); }
-        .meal-macros-top { font-size: 11px; font-weight: 600; color: var(--text-sec); }
-        .meal-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; }
+        .meal-time {
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
 
-        /* DODANY STYL ZDJĘĆ */
-        .meal-photo {
-            width: calc(100% + 40px);
-            margin-left: -20px;
-            margin-top: -15px;
+        .meal-macros-top {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sec);
+        }
+
+        .meal-title {
+            font-size: 15px;
+            font-weight: 600;
             margin-bottom: 15px;
-            height: 220px;
-            object-fit: cover;
-            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        /* ----- STYL ZDJĘĆ ----- */
+        .meal-photo {
+            width: 100%;
+            height: 220px; /* Stała wysokość zdjęcia */
+            object-fit: cover; /* Ładne wypełnienie */
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
             display: block;
         }
 
         .content-grid { display: flex; flex-direction: column; gap: 15px; }
 
-        .ingredients-list { display: flex; flex-direction: column; }
+        /* POPRAWIONA LISTA SKŁADNIKÓW (KAŻDY W NOWEJ LINII) */
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+        }
 
         .ing-item {
-            display: block; font-size: 13px; padding: 8px 0;
+            display: block;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 6px 0;
+            color: var(--text-main);
             border-bottom: 1px solid var(--ing-border);
         }
         .ing-item:last-child { border-bottom: none; }
 
+        /* INSTRUKCJE */
         .instructions {
-            font-size: 13px; line-height: 1.6; color: var(--text-sec);
-            padding-top: 10px; border-top: 2px dashed var(--border);
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-sec);
+            padding-top: 10px;
+            border-top: 2px dashed var(--border);
         }
         .instructions ol { padding-left: 18px; margin: 5px 0; }
         .instructions li { margin-bottom: 8px; }
 
+        /* PODSUMOWANIE DNIA */
         .day-summary {
-            background: var(--summary-bg); padding: 15px; border-radius: 12px;
-            border-left: 5px solid var(--primary); margin-top: 30px;
+            background-color: var(--summary-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary);
         }
         .sum-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sec); margin-bottom: 5px; display: block; }
         .sum-values { font-size: 15px; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
 
+        /* ZAKUPY */
         .shop-group { margin-bottom: 25px; }
-        .shop-header { color: var(--primary); font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-        .shop-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); transition: 0.3s; }
-        .shop-item input { width: 22px; height: 22px; margin-right: 15px; accent-color: var(--primary); cursor: pointer; }
-        .shop-item label { width: 100%; cursor: pointer; display: flex; align-items: center; }
-        .shop-item.hidden-item { display: none; }
+        .shop-header {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .shop-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+            transition: opacity 0.3s, transform 0.3s; /* Animacja znikania */
+        }
+        .shop-item input {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        .shop-item label {
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Klasa ukrywająca produkt */
+        .shop-item.hidden-item {
+            display: none;
+        }
 
         .btn-reset {
-            width: 100%; padding: 16px; background: var(--bg-card);
-            border: 1px solid var(--border); color: var(--text-main);
-            font-weight: 600; border-radius: 12px; margin-top: 20px; cursor: pointer;
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
         }
 
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--nav-bg); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around;
-            padding-top: 15px; padding-bottom: max(20px, env(safe-area-inset-bottom));
-            z-index: 1000;
-        }
-        .nav-btn { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: var(--text-sec); font-size: 10px; font-weight: 600; gap: 4px; }
-        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
-        .nav-btn.active { color: var(--primary); }
-
+        /* UKRYWANIE */
         .tab-content, .view-section { display: none; }
         .tab-content.active, .view-section.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* DOLNE MENU */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding-top: 10px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            z-index: 1000;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-sec);
+            font-size: 10px;
+            font-weight: 600;
+            gap: 4px;
+        }
+        .nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-btn.active { color: var(--primary); }
+
     </style>
 </head>
 <body>
@@ -190,23 +309,26 @@
     </div>
 
     <div id="daysNav" class="days-nav">
-        <button onclick="openDay('pon')" class="active" id="btn-pon">Pn</button>
+        <button onclick="openDay('pon')" class="active" id="btn-pon">Pon</button>
         <button onclick="openDay('wt')" id="btn-wt">Wt</button>
         <button onclick="openDay('sr')" id="btn-sr">Śr</button>
         <button onclick="openDay('czw')" id="btn-czw">Czw</button>
         <button onclick="openDay('pt')" id="btn-pt">Pt</button>
-        <button onclick="openDay('sob')" id="btn-sob">Sb</button>
+        <button onclick="openDay('sob')" id="btn-sob">Sob</button>
         <button onclick="openDay('nd')" id="btn-nd">Nd</button>
     </div>
 
     <div class="container">
+
         <div id="view-diet" class="view-section active">
-            
+
             <div id="day-pon" class="tab-content active">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:724 B:48 T:24 W:81</span></div>
                     <div class="meal-title">KANAPKI Z HUMMUSEM LIGHT</div>
+                    
                     <img src="pn1.png" class="meal-photo" alt="Śniadanie Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -216,13 +338,19 @@
                             <div class="ing-item">MIX sałat - 20 g (0.2 x Opakowanie)</div>
                             <div class="ing-item">Rzodkiewka - 15 g (1 x Sztuka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol><small>Sugerowane przyprawy: pieprz, natka pietruszki, szczypiorek.</small></div>
+                        <div class="instructions">
+                            <ol><li>Z podanych składników przygotować kanapki.</li></ol>
+                            <small>Sugerowane przyprawy: pieprz, natka pietruszki, szczypiorek.</small>
+                        </div>
                     </div>
                 </div>
+
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:715 B:62 T:19 W:73</span></div>
                     <div class="meal-title">MAKARON W SOSIE SZPINAKOWYM</div>
+                    
                     <img src="pn2.png" class="meal-photo" alt="Obiad Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 200 g (2 x Kawałek)</div>
@@ -233,13 +361,23 @@
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                             <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
                         </div>
-                        <div class="instructions"><ol><li>Makaron ugotować al dente.</li><li>Mięso doprawić, pokroić na kawałki i usmażyć na oliwie z czosnkiem.</li><li>Dodać szpinak, chwilę poddusić, zalać śmietaną, doprawić.</li></ol><small>Sugerowane przyprawy: gałka muszkatołowa, zioła prowansalskie, pieprz.</small></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Makaron ugotować al dente.</li>
+                                <li>Mięso doprawić, pokroić na kawałki i usmażyć na oliwie z czosnkiem.</li>
+                                <li>Dodać szpinak, chwilę poddusić, zalać śmietaną, doprawić.</li>
+                            </ol>
+                            <small>Sugerowane przyprawy: gałka muszkatołowa, zioła prowansalskie, pieprz.</small>
+                        </div>
                     </div>
                 </div>
+
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:790 B:54 T:23 W:90</span></div>
                     <div class="meal-title">SZEJK A'LA SNICKERS (LIGHT)</div>
+                    
                     <img src="pn3.png" class="meal-photo" alt="Kolacja Poniedziałek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
@@ -251,14 +389,20 @@
                         <div class="instructions"><ol><li>Zmiksować wszystkie składniki.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2230 | B: 164 | T: 66 | W: 244</div></div>
+
+                <div class="day-summary">
+                    <span class="sum-title">PODSUMOWANIE DNIA</span>
+                    <div class="sum-values">SUMA: K: 2230 | B: 164 | T: 66 | W: 244</div>
+                </div>
             </div>
 
             <div id="day-wt" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:48 T:18 W:98</span></div>
                     <div class="meal-title">JAGLANKA OWOCOWA</div>
+                    
                     <img src="wt1.png" class="meal-photo" alt="Śniadanie Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 300 g (1.2 x Szklanka)</div>
@@ -271,10 +415,13 @@
                         <div class="instructions"><ol><li>Płatki przepłukać gorącą wodą, następnie ugotować na mleku.</li><li>Dodać resztę składników.</li></ol></div>
                     </div>
                 </div>
+
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:705 B:64 T:18 W:75</span></div>
                     <div class="meal-title">KOTLETY Z PIECA + DESER</div>
+                    
                     <img src="wt2.png" class="meal-photo" alt="Obiad Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
@@ -286,13 +433,23 @@
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                             <div class="ing-item">Deser: Jogurt Vitanella 250g (1 x Opakowanie)</div>
                         </div>
-                        <div class="instructions"><ol><li>Ziemniaki ugotować lub pokroić w łódeczki i upiec.</li><li>Mięso wymieszać ze startymi warzywami.</li><li>Kotlety upiec w piekarniku skropione oliwą.</li><li>Podawać z gotowanymi warzywami.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ziemniaki ugotować lub pokroić w łódeczki i upiec (ok. 40 min w 180 st. C).</li>
+                                <li>Mięso wymieszać ze startymi warzywami(cukinia i marchew)i posiekaną cebulką.</li>
+                                <li>Kotlety usmażyć na oliwie lub upiec w piekarniku skropione oliwą (ok. 30 min 180 st. C - obrócić w połowie pieczenia).</li>
+                                <li>Podawać z gotowanymi warzywami.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
+
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:760 B:57 T:24 W:78</span></div>
                     <div class="meal-title">KANAPKI Z SERKIEM WIEJSKIM</div>
+                    
                     <img src="wt3.png" class="meal-photo" alt="Kolacja Wtorek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Serek wiejski bez laktozy - 200 g (1 x Sztuka)</div>
@@ -305,14 +462,20 @@
                         <div class="instructions"><ol><li>Pieczywo posmaruj hummusem i połóż na nim szynkę.</li><li>Do serka dodaj posiekane warzywa.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2205 | B: 169 | T: 60 | W: 251</div></div>
+
+                <div class="day-summary">
+                    <span class="sum-title">PODSUMOWANIE DNIA</span>
+                    <div class="sum-values">SUMA: K: 2205 | B: 169 | T: 60 | W: 251</div>
+                </div>
             </div>
 
             <div id="day-sr" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:42 T:24 W:82</span></div>
                     <div class="meal-title">JAGLANKA RAFFAELLO</div>
+                    
                     <img src="sr1.png" class="meal-photo" alt="Śniadanie Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
@@ -322,13 +485,21 @@
                             <div class="ing-item">Migdały - 15 g (1 x Łyżka)</div>
                             <div class="ing-item">Wiórki kokosowe - 5 g (1 x Łyżeczka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Płatki ugotować na mleku.</li><li>Wymieszać z wiórkami i migdałami.</li><li>Posypać malinami.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Płatki ugotować na mleku (można dolać wody według uznania).</li>
+                                <li>Zdjąć z ognia i wymieszać z połową wiórków kokosowych i migdałów.</li>
+                                <li>Posypać resztą migdałów i wiórków oraz malinami.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:810 B:69 T:12 W:105</span></div>
                     <div class="meal-title">BURRITO BOWL</div>
+                    
                     <img src="sr2.png" class="meal-photo" alt="Obiad Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidory z puszki (krojone) - 400 g (4 x Porcja)</div>
@@ -339,13 +510,21 @@
                             <div class="ing-item">Papryka czerwona - 70 g (0.5 x Sztuka)</div>
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Ugotować ryż.</li><li>Podsmażyć mięso z cebulą i warzywami.</li><li>Podawać z ryżem.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ugotować ryż zgodnie z instrukcją na opakowaniu.</li>
+                                <li>Podsmażyć pokrojone mięso oraz cebulę na oliwie. Po kilku minutach dodać warzywa. Poddusić i doprawić.</li>
+                                <li>Potrawkę podać z ryżem.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:720 B:50 T:20 W:85</span></div>
                     <div class="meal-title">KANAPKI PESTO</div>
+                    
                     <img src="sr3.png" class="meal-photo" alt="Kolacja Środa">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -358,14 +537,18 @@
                         <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2240 | B: 161 | T: 56 | W: 272</div></div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2240 | B: 161 | T: 56 | W: 272</div>
+                </div>
             </div>
 
             <div id="day-czw" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:750 B:48 T:25 W:85</span></div>
                     <div class="meal-title">OMLET PEŁNOZIARNISTY</div>
+                    
                     <img src="cz1.png" class="meal-photo" alt="Śniadanie Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidor - 120 g (1 x Sztuka)</div>
@@ -378,13 +561,22 @@
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                             <div class="ing-item">Przekąska: Winogrona 200g, Banan 1szt</div>
                         </div>
-                        <div class="instructions"><ol><li>Jaja wymieszać z mąką.</li><li>Podsmażyć cebulę i szynkę.</li><li>Wylać jajka, dodać ser i usmażyć.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Jaja wymieszać z mąką, doprawić według preferencji.</li>
+                                <li>Na oliwie podsmażyć cebulę oraz szynkę.</li>
+                                <li>Następnie wylać jajka na patelnię, dodać mozzarellę i usmażyć.</li>
+                                <li>Omleta podawać z keczupem i warzywami.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:780 B:68 T:20 W:80</span></div>
                     <div class="meal-title">MAKARON PESTO</div>
+                    
                     <img src="cz2.png" class="meal-photo" alt="Obiad Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 250 g (2.5 x Kawałek)</div>
@@ -396,13 +588,22 @@
                             <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Makaron ugotować al dente.</li><li>Mięso usmażyć.</li><li>Wymieszać z pesto i makaronem.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Makaron ugotować al dente.</li>
+                                <li>Mięso pokroić na kawałki, doprawić i usmażyć na oliwie.</li>
+                                <li>Dodać makaron i wymieszać całość z pesto.</li>
+                                <li>Podawać z sałatą ze świeżych warzyw.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:730 B:55 T:18 W:85</span></div>
                     <div class="meal-title">SZEJK CZEKOLADOWY (BEZ KAWY)</div>
+                    
                     <img src="cz3.png" class="meal-photo" alt="Kolacja Czwartek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 400 g (1.6 x Szklanka)</div>
@@ -415,14 +616,18 @@
                         <div class="instructions"><ol><li>Zmiksować wszystkie składniki.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2260 | B: 171 | T: 63 | W: 250</div></div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2260 | B: 171 | T: 63 | W: 250</div>
+                </div>
             </div>
 
             <div id="day-pt" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:720 B:40 T:18 W:100</span></div>
                     <div class="meal-title">JAGLANKA TRUSKAWKOWA</div>
+                    
                     <img src="pt1.png" class="meal-photo" alt="Śniadanie Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mleko bezlaktozowe 1,5% UHT - 250 g (1 x Szklanka)</div>
@@ -432,13 +637,20 @@
                             <div class="ing-item">Odżywka białkowa - WPC - 30 g (1 x Miarka)</div>
                             <div class="ing-item">Orzechy włoskie - 10 g (1.3 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Płatki ugotować na mleku.</li><li>Dodać resztę składników.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Płatki ugotować na mleku (można dolać wody według uznania).</li>
+                                <li>Dodać resztę składników.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:760 B:75 T:18 W:75</span></div>
                     <div class="meal-title">ŁOSOŚ Z PIECA + DESER</div>
+                    
                     <img src="pt2.png" class="meal-photo" alt="Obiad Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ziemniaki - 250 g (3.5 x Sztuka)</div>
@@ -447,13 +659,21 @@
                             <div class="ing-item">Skyr naturalny, jogurt typu islandzkiego - 150 g (1 x Sztuka)</div>
                             <div class="ing-item">Deser: Jogurt proteinowy Vitanella (Biedronka) - 250 g</div>
                         </div>
-                        <div class="instructions"><ol><li>Rybę upiec w folii.</li><li>Ziemniaki upiec.</li><li>Podać z mizerią.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Rybę przyprawić (można skropić sokiem z cytryny), upiec w zamkniętym naczyniu lub w folii (ok. 20 min w 180 st. C).</li>
+                                <li>Ziemniaki ugotować lub pokroić w łódeczki i upiec (ok. 40 min w 180 st. C).</li>
+                                <li>Podawać z mizerią z ogórka i jogurtu.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:780 B:48 T:22 W:95</span></div>
                     <div class="meal-title">KANAPKI PESTO</div>
+                    
                     <img src="pt3.png" class="meal-photo" alt="Kolacja Piątek">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -466,14 +686,18 @@
                         <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2260 | B: 163 | T: 58 | W: 270</div></div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2260 | B: 163 | T: 58 | W: 270</div>
+                </div>
             </div>
 
             <div id="day-sob" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:45 T:24 W:80</span></div>
                     <div class="meal-title">TOSTY + ORZECHY</div>
+                    
                     <img src="sb1.png" class="meal-photo" alt="Śniadanie Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Chleb żytni razowy - 120 g (4 x Kromka)</div>
@@ -484,13 +708,15 @@
                             <div class="ing-item">Keczup - 20 g (1.3 x Łyżka)</div>
                             <div class="ing-item">Przekąska: Orzechy włoskie - 20 g (1.3 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Przygotować tosty.</li></ol></div>
+                        <div class="instructions"><ol><li>Przygotować tosty z podanych składników.</li></ol></div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:820 B:62 T:15 W:110</span></div>
                     <div class="meal-title">POLĘDWICZKA Z KASZĄ</div>
+                    
                     <img src="sb2.png" class="meal-photo" alt="Obiad Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Jabłko - 150 g (1 x Sztuka)</div>
@@ -500,13 +726,21 @@
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                             <div class="ing-item">Deser: Jogurt proteinowy Vitanella - 250 g</div>
                         </div>
-                        <div class="instructions"><ol><li>Kaszę ugotować.</li><li>Mięso usmażyć.</li><li>Podawać z surówką z marchwi i jabłka.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Kaszę ugotować zgodnie z instrukcją na opakowaniu.</li>
+                                <li>Mięso pokroić w plastry i delikatnie spłaszczyć je dłonią, doprawić, usmażyć na oliwie lub upiec w piekarniku skropione oliwą.</li>
+                                <li>Podawać z surówką z tartej marchewki z jabłkiem.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:750 B:45 T:22 W:95</span></div>
                     <div class="meal-title">KANAPKI HUMMUS</div>
+                    
                     <img src="sb3.png" class="meal-photo" alt="Kolacja Sobota">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -519,14 +753,18 @@
                         <div class="instructions"><ol><li>Z podanych składników przygotować kanapki.</li></ol></div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2280 | B: 152 | T: 61 | W: 285</div></div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2280 | B: 152 | T: 61 | W: 285</div>
+                </div>
             </div>
 
             <div id="day-nd" class="tab-content">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:55 T:24 W:75</span></div>
                     <div class="meal-title">SZAKSZUKA + SKYR</div>
+                    
                     <img src="nd1.png" class="meal-photo" alt="Śniadanie Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Pomidor - 240 g (2 x Sztuka)</div>
@@ -538,13 +776,22 @@
                             <div class="ing-item">Czosnek - 5 g (1 x Ząbek)</div>
                             <div class="ing-item">Przekąska: Skyr owocowy 150g (1 x Sztuka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Na oliwie podsmażyć czosnek i szynkę.</li><li>Dorzucić pomidory.</li><li>Wbić jajka i dodać ser, dusić.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Na oliwie podsmażyć czosnek i szynkę.</li>
+                                <li>Dorzucić pomidory.</li>
+                                <li>Wbić jajka i dodać pokrojoną mozarellę i smażyć, dopóki się nie zetną (szybciej będzie pod przykryciem).</li>
+                                <li>Doprawić i podawać z resztą składników.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD 10:30</span><span class="meal-macros-top">K:690 B:45 T:10 W:105</span></div>
                     <div class="meal-title">CHIŃSZCZYZNA LIGHT</div>
+                    
                     <img src="nd2.png" class="meal-photo" alt="Obiad Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Mięso z piersi kurczaka, bez skóry - 180 g (1.8 x Kawałek)</div>
@@ -553,13 +800,21 @@
                             <div class="ing-item">Oliwa z oliwek - 5 g (0.5 x Łyżka)</div>
                             <div class="ing-item">Sos sojowy ciemny - 10 g (1 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Ryż ugotować.</li><li>Mięso podsmażyć z warzywami.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Ryż ugotować zgodnie z zaleceniami producenta.</li>
+                                <li>Na oliwie podsmażyć mięso. Dodać mieszankę warzyw.</li>
+                                <li>Połączyć wszystkie składniki.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">KOLACJA 19:00</span><span class="meal-macros-top">K:850 B:75 T:20 W:95</span></div>
                     <div class="meal-title">DESER KAKAOWY (BEZ KAWY)</div>
+                    
                     <img src="nd3.png" class="meal-photo" alt="Kolacja Niedziela">
+
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Ser twarogowy chudy - 250 g (1.2 x Opakowanie)</div>
@@ -569,15 +824,24 @@
                             <div class="ing-item">Orzechy włoskie - 15 g (1 x Łyżka)</div>
                             <div class="ing-item">Kakao (proszek 11%) - 10 g (1 x Łyżka)</div>
                         </div>
-                        <div class="instructions"><ol><li>Twaróg zmiksować z jogurtem.</li><li>Masę przekładać biszkoptami.</li></ol></div>
+                        <div class="instructions">
+                            <ol>
+                                <li>Twaróg zmiksować z jogurtem. Można dodać słodzik.</li>
+                                <li>Masę twarogową przekładać biszkoptami zamoczonymi w mleku z kakao.</li>
+                                <li>Na górze posypać kakao, zjeść z owocami i orzechami.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
-                <div class="day-summary"><span class="sum-title">PODSUMOWANIE DNIA</span><div class="sum-values">SUMA: K: 2280 | B: 175 | T: 54 | W: 275</div></div>
+                <div class="day-summary">
+                    <div class="sum-values">SUMA: K: 2280 | B: 175 | T: 54 | W: 275</div>
+                </div>
             </div>
 
         </div>
 
         <div id="view-shopping" class="view-section">
+            
             <div class="shop-group">
                 <div class="shop-header">Warzywa i Owoce</div>
                 <div class="shop-item"><label><input type="checkbox"><span>Banany (ok. 1 kg - 8-9 sztuk)</span></label></div>
@@ -675,9 +939,6 @@
             
             document.querySelectorAll('.days-nav button').forEach(el => el.classList.remove('active'));
             document.getElementById('btn-' + dayId).classList.add('active');
-            
-            // AUTOMATYCZNE PRZEWIJANIE DO GÓRY
-            window.scrollTo(0, 0);
         }
 
         // Logika Widoków
@@ -690,9 +951,6 @@
 
             const daysNav = document.getElementById('daysNav');
             daysNav.style.display = (viewName === 'diet') ? 'flex' : 'none';
-            
-            // Też przewija do góry przy zmianie zakładki
-            window.scrollTo(0, 0);
         }
 
         // Dark Mode
