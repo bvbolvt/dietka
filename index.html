@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
     <link rel="apple-touch-icon" href="https://imgbin.com/png/QBCKRYTx/diet-icon-cancer-day-icon-fruit-icon-png">
-    <title>Plan 2300 kcal</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dieta">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dieta">
+
+    <title>Plan 2300 kcal</title>
     <style>
         :root {
-            /* Zmienne kolorów - Light Mode */
             --primary: #fca311;
             --bg-body: #ffffff;
             --bg-card: #ffffff;
@@ -22,7 +24,6 @@
             --ing-border: #f5f5f7;
         }
 
-        /* Zmienne kolorów - Dark Mode */
         [data-theme="dark"] {
             --primary: #ffd60a;
             --bg-body: #000000;
@@ -38,47 +39,52 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
             margin: 0;
             padding: 0;
+            padding-bottom: 100px;
             background-color: var(--bg-body);
             color: var(--text-main);
-            padding-bottom: 100px;
-            padding-top: 60px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease;
+            /* Ważne: padding na górze uwzględniający notcha */
+            padding-top: env(safe-area-inset-top);
         }
 
-        /* GÓRNY PASEK */
+        /* GÓRNY PASEK (Poprawiony) */
         .top-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
+            /* Wysokość: stałe 50px + bezpieczny margines na notcha */
+            height: calc(50px + env(safe-area-inset-top));
+            padding-top: env(safe-area-inset-top);
             background: var(--nav-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            padding-top: env(safe-area-inset-top);
+            justify-content: flex-end; /* Ikona do prawej */
+            padding-right: 20px;
             z-index: 1000;
             border-bottom: 1px solid var(--border);
         }
 
-        .app-title { font-size: 17px; font-weight: 600; }
-        .theme-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 5px; }
+        .theme-toggle { 
+            background: none; 
+            border: none; 
+            font-size: 24px; 
+            cursor: pointer; 
+            padding: 10px; /* Większe pole dotyku */
+        }
 
-        /* PASEK DNI */
+        /* PASEK DNI (Poprawiony - zaczyna się pod headerem) */
         .days-nav {
             position: fixed;
-            top: 60px;
+            top: calc(50px + env(safe-area-inset-top));
             left: 0;
             right: 0;
             background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             display: flex;
             overflow-x: auto;
             padding: 10px 15px;
@@ -89,200 +95,86 @@
         .days-nav::-webkit-scrollbar { display: none; }
 
         .days-nav button {
-            background: none;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-sec);
-            padding: 8px 16px;
-            white-space: nowrap;
-            border-radius: 20px;
-            transition: all 0.2s;
-            margin-right: 5px;
+            background: none; border: none; font-size: 14px; font-weight: 600;
+            color: var(--text-sec); padding: 8px 16px; white-space: nowrap;
+            border-radius: 20px; margin-right: 5px;
         }
 
-        .days-nav button.active {
-            background-color: var(--text-main);
-            color: var(--bg-body);
-        }
+        .days-nav button.active { background-color: var(--text-main); color: var(--bg-body); }
 
-        /* GŁÓWNY KONTENER */
+        /* KONTENER (Zwiększony margines górny, żeby treść nie wchodziła pod paski) */
         .container {
-            padding: 60px 20px 20px 20px;
+            padding: 120px 20px 20px 20px;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* KARTY POSIŁKÓW */
         .meal-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border: 1px solid var(--border);
+            background: var(--bg-card); border-radius: 16px; padding: 20px;
+            margin-bottom: 25px; border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
 
         .meal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: baseline;
+            border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 15px;
         }
 
-        .meal-time {
-            font-size: 15px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: var(--primary);
-        }
-
-        .meal-macros-top {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-sec);
-        }
-
-        .meal-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--text-main);
-            text-transform: uppercase;
-        }
-
-        .content-grid { display: flex; flex-direction: column; gap: 15px; }
-
-        /* POPRAWIONA LISTA SKŁADNIKÓW (KAŻDY W NOWEJ LINII) */
-        .ingredients-list {
-            display: flex;
-            flex-direction: column;
-        }
+        .meal-time { font-size: 15px; font-weight: 800; color: var(--primary); }
+        .meal-macros-top { font-size: 11px; font-weight: 600; color: var(--text-sec); }
+        .meal-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; }
 
         .ing-item {
-            display: block;
-            font-size: 14px;
-            line-height: 1.5;
-            padding: 6px 0;
-            color: var(--text-main);
+            display: block; font-size: 13px; padding: 8px 0;
             border-bottom: 1px solid var(--ing-border);
         }
         .ing-item:last-child { border-bottom: none; }
 
-        /* INSTRUKCJE */
         .instructions {
-            font-size: 13px;
-            line-height: 1.6;
-            color: var(--text-sec);
-            padding-top: 10px;
-            border-top: 2px dashed var(--border);
+            font-size: 13px; line-height: 1.6; color: var(--text-sec);
+            padding-top: 12px; border-top: 2px dashed var(--border); margin-top: 15px;
         }
-        .instructions ol { padding-left: 18px; margin: 5px 0; }
-        .instructions li { margin-bottom: 8px; }
+        .instructions ol { padding-left: 20px; margin: 5px 0; }
+        .instructions li { margin-bottom: 5px; }
 
-        /* PODSUMOWANIE DNIA */
         .day-summary {
-            background-color: var(--summary-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 30px;
-            border-left: 5px solid var(--primary);
+            background: var(--summary-bg); padding: 15px; border-radius: 12px;
+            border-left: 5px solid var(--primary); margin-top: 20px;
+            font-weight: bold; font-size: 14px;
         }
-        .sum-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-sec); margin-bottom: 5px; display: block; }
-        .sum-values { font-size: 15px; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
 
         /* ZAKUPY */
         .shop-group { margin-bottom: 25px; }
-        .shop-header {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--primary);
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .shop-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 15px;
-            transition: opacity 0.3s, transform 0.3s; /* Animacja znikania */
-        }
-        .shop-item input {
-            width: 22px;
-            height: 22px;
-            margin-right: 15px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-        .shop-item label {
-            width: 100%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Klasa ukrywająca produkt */
-        .shop-item.hidden-item {
-            display: none;
-        }
+        .shop-header { color: var(--primary); font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .shop-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); transition: 0.3s; }
+        .shop-item.hidden-item { display: none; }
+        .shop-item input { width: 22px; height: 22px; margin-right: 15px; accent-color: var(--primary); }
+        .shop-item label { width: 100%; cursor: pointer; display: flex; align-items: center; }
 
         .btn-reset {
-            width: 100%;
-            padding: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            font-weight: 600;
-            border-radius: 12px;
-            margin-top: 20px;
-            cursor: pointer;
+            width: 100%; padding: 16px; background: var(--bg-card);
+            border: 1px solid var(--border); color: var(--text-main);
+            font-weight: 600; border-radius: 12px; margin-top: 20px; cursor: pointer;
         }
-
-        /* UKRYWANIE */
-        .tab-content, .view-section { display: none; }
-        .tab-content.active, .view-section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* DOLNE MENU */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding-top: 10px;
-            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--nav-bg); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around;
+            padding-top: 15px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
             z-index: 1000;
         }
-        .nav-btn {
-            background: none;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-sec);
-            font-size: 10px;
-            font-weight: 600;
-            gap: 4px;
-        }
+
+        .nav-btn { background: none; border: none; font-size: 11px; font-weight: 700; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; gap:4px; }
         .nav-btn svg { width: 24px; height: 24px; fill: currentColor; }
         .nav-btn.active { color: var(--primary); }
-
     </style>
 </head>
-<body>
+<body data-theme="light">
 
     <div class="top-bar">
-        <div class="app-title">Dieta 2300 kcal</div>
         <button class="theme-toggle" onclick="toggleTheme()" id="themeIcon">🌙</button>
     </div>
 
@@ -297,13 +189,12 @@
     </div>
 
     <div class="container">
-
         <div id="view-diet" class="view-section active">
-
+            
             <div id="day-pon" class="tab-content active">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:724 B:48 T:24 W:81</span></div>
-                    <div class="meal-title">KANAPKI Z HUMMUSEM LIGHT</div>
+                    <div class="meal-title">KANAPKI - Z HUMMUSEM LIGHT</div>
                     <div class="content-grid">
                         <div class="ingredients-list">
                             <div class="ing-item">Bułki grahamki - 130 g (2 x Sztuka)</div>
@@ -360,12 +251,11 @@
                 </div>
 
                 <div class="day-summary">
-                    <span class="sum-title">PODSUMOWANIE DNIA</span>
                     <div class="sum-values">SUMA: K: 2230 | B: 164 | T: 66 | W: 244</div>
                 </div>
             </div>
 
-            <div id="day-wt" class="tab-content">
+            <div id="day-wt" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:48 T:18 W:98</span></div>
                     <div class="meal-title">JAGLANKA OWOCOWA</div>
@@ -424,12 +314,11 @@
                 </div>
 
                 <div class="day-summary">
-                    <span class="sum-title">PODSUMOWANIE DNIA</span>
                     <div class="sum-values">SUMA: K: 2205 | B: 169 | T: 60 | W: 251</div>
                 </div>
             </div>
 
-            <div id="day-sr" class="tab-content">
+            <div id="day-sr" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:42 T:24 W:82</span></div>
                     <div class="meal-title">JAGLANKA RAFFAELLO</div>
@@ -493,7 +382,7 @@
                 </div>
             </div>
 
-            <div id="day-czw" class="tab-content">
+            <div id="day-czw" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:750 B:48 T:25 W:85</span></div>
                     <div class="meal-title">OMLET PEŁNOZIARNISTY</div>
@@ -563,7 +452,7 @@
                 </div>
             </div>
 
-            <div id="day-pt" class="tab-content">
+            <div id="day-pt" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:720 B:40 T:18 W:100</span></div>
                     <div class="meal-title">JAGLANKA TRUSKAWKOWA</div>
@@ -624,7 +513,7 @@
                 </div>
             </div>
 
-            <div id="day-sob" class="tab-content">
+            <div id="day-sob" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:710 B:45 T:24 W:80</span></div>
                     <div class="meal-title">TOSTY + ORZECHY</div>
@@ -682,7 +571,7 @@
                 </div>
             </div>
 
-            <div id="day-nd" class="tab-content">
+            <div id="day-nd" class="tab-content" style="display:none">
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">ŚNIADANIE 07:00</span><span class="meal-macros-top">K:740 B:55 T:24 W:75</span></div>
                     <div class="meal-title">SZAKSZUKA + SKYR</div>
@@ -755,7 +644,7 @@
 
         </div>
 
-        <div id="view-shopping" class="view-section">
+        <div id="view-shopping" class="view-section" style="display:none">
             
             <div class="shop-group">
                 <div class="shop-header">Warzywa i Owoce</div>
@@ -921,6 +810,3 @@
     </script>
 </body>
 </html>
-
-
-
