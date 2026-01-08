@@ -80,7 +80,7 @@
             padding: 10px; 
         }
 
-        /* PASEK DNI - POPRAWIONY */
+        /* PASEK DNI - POPRAWIONY (WIDOCZNE WSZYSTKIE DNI) */
         .days-nav {
             position: fixed;
             /* Zaczyna się dokładnie pod górnym paskiem */
@@ -91,25 +91,25 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
-            overflow-x: auto;
-            padding: 10px 15px;
+            justify-content: space-between; /* Rozciągnij na całą szerokość */
+            padding: 10px 5px; /* Mniejsze marginesy boczne */
             z-index: 900;
             border-bottom: 1px solid var(--border);
-            scrollbar-width: none;
         }
-        .days-nav::-webkit-scrollbar { display: none; }
 
         .days-nav button {
             background: none;
             border: none;
-            font-size: 15px;
+            font-size: 13px; /* Troszkę mniejsza czcionka, żeby się zmieściło */
             font-weight: 600;
             color: var(--text-sec);
-            padding: 8px 16px;
+            padding: 8px 0; /* Padding tylko góra/dół */
+            flex: 1; /* Każdy przycisk zajmuje tyle samo miejsca */
             white-space: nowrap;
-            border-radius: 20px;
+            border-radius: 8px;
+            text-align: center;
             transition: all 0.2s;
-            margin-right: 5px;
+            margin: 0 2px; /* Minimalny odstęp */
         }
 
         .days-nav button.active {
@@ -939,6 +939,9 @@
             
             document.querySelectorAll('.days-nav button').forEach(el => el.classList.remove('active'));
             document.getElementById('btn-' + dayId).classList.add('active');
+            
+            // AUTOMATYCZNE PRZEWIJANIE DO GÓRY
+            window.scrollTo(0, 0);
         }
 
         // Logika Widoków
@@ -951,6 +954,9 @@
 
             const daysNav = document.getElementById('daysNav');
             daysNav.style.display = (viewName === 'diet') ? 'flex' : 'none';
+            
+            // Też przewija do góry przy zmianie zakładki
+            window.scrollTo(0, 0);
         }
 
         // Dark Mode
