@@ -47,17 +47,15 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             padding-bottom: 100px;
-            /* Usunięty stary padding-top, teraz reguluje to kontener */
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* GÓRNY PASEK - POPRAWIONY */
+        /* GÓRNY PASEK */
         .top-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            /* Wysokość dostosowuje się do Notcha/Wyspy */
             height: calc(50px + env(safe-area-inset-top)); 
             padding-top: env(safe-area-inset-top);
             background: var(--nav-bg);
@@ -65,7 +63,7 @@
             -webkit-backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Przesuwa ikonę maksymalnie w prawo */
+            justify-content: flex-end;
             padding-right: 20px;
             padding-left: 20px;
             z-index: 1000;
@@ -75,15 +73,14 @@
         .theme-toggle { 
             background: none; 
             border: none; 
-            font-size: 24px; /* Nieco większa ikona */
+            font-size: 24px; 
             cursor: pointer; 
             padding: 10px; 
         }
 
-        /* PASEK DNI - POPRAWIONY */
+        /* PASEK DNI - ZMIENIONY NA PEŁNĄ SZEROKOŚĆ */
         .days-nav {
             position: fixed;
-            /* Zaczyna się dokładnie pod górnym paskiem */
             top: calc(50px + env(safe-area-inset-top)); 
             left: 0;
             right: 0;
@@ -91,25 +88,24 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
-            overflow-x: auto;
-            padding: 10px 15px;
+            justify-content: space-between; /* Rozłożenie równomierne */
+            padding: 10px 10px; /* Mniejszy padding boczny */
             z-index: 900;
             border-bottom: 1px solid var(--border);
-            scrollbar-width: none;
         }
-        .days-nav::-webkit-scrollbar { display: none; }
 
         .days-nav button {
             background: none;
             border: none;
-            font-size: 15px;
+            font-size: 13px; /* Troszkę mniejsza czcionka żeby weszło */
             font-weight: 600;
             color: var(--text-sec);
-            padding: 8px 16px;
-            white-space: nowrap;
-            border-radius: 20px;
+            padding: 8px 0; /* Padding góra/dół, boki 0 */
+            width: 100%; /* Każdy przycisk zajmuje równą szerokość */
+            text-align: center;
+            border-radius: 8px; /* Mniejsze zaokrąglenie */
             transition: all 0.2s;
-            margin-right: 5px;
+            margin: 0 2px; /* Mały odstęp między przyciskami */
         }
 
         .days-nav button.active {
@@ -117,9 +113,8 @@
             color: var(--bg-body);
         }
 
-        /* GŁÓWNY KONTENER - POPRAWIONY MARGINES */
+        /* GŁÓWNY KONTENER */
         .container {
-            /* Duży odstęp od góry, żeby treść nie wchodziła pod paski */
             padding: 130px 20px 20px 20px; 
             max-width: 600px;
             margin: 0 auto;
@@ -168,8 +163,8 @@
         /* ----- STYL ZDJĘĆ ----- */
         .meal-photo {
             width: 100%;
-            height: 220px; /* Stała wysokość zdjęcia */
-            object-fit: cover; /* Ładne wypełnienie */
+            height: 220px; 
+            object-fit: cover; 
             border-radius: 12px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
@@ -178,7 +173,6 @@
 
         .content-grid { display: flex; flex-direction: column; gap: 15px; }
 
-        /* POPRAWIONA LISTA SKŁADNIKÓW (KAŻDY W NOWEJ LINII) */
         .ingredients-list {
             display: flex;
             flex-direction: column;
@@ -194,7 +188,6 @@
         }
         .ing-item:last-child { border-bottom: none; }
 
-        /* INSTRUKCJE */
         .instructions {
             font-size: 13px;
             line-height: 1.6;
@@ -205,7 +198,6 @@
         .instructions ol { padding-left: 18px; margin: 5px 0; }
         .instructions li { margin-bottom: 8px; }
 
-        /* PODSUMOWANIE DNIA */
         .day-summary {
             background-color: var(--summary-bg);
             border-radius: 12px;
@@ -232,7 +224,7 @@
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
             font-size: 15px;
-            transition: opacity 0.3s, transform 0.3s; /* Animacja znikania */
+            transition: opacity 0.3s, transform 0.3s;
         }
         .shop-item input {
             width: 22px;
@@ -247,11 +239,7 @@
             display: flex;
             align-items: center;
         }
-        
-        /* Klasa ukrywająca produkt */
-        .shop-item.hidden-item {
-            display: none;
-        }
+        .shop-item.hidden-item { display: none; }
 
         .btn-reset {
             width: 100%;
@@ -264,11 +252,6 @@
             margin-top: 20px;
             cursor: pointer;
         }
-
-        /* UKRYWANIE */
-        .tab-content, .view-section { display: none; }
-        .tab-content.active, .view-section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* DOLNE MENU */
         .bottom-nav {
@@ -939,6 +922,9 @@
             
             document.querySelectorAll('.days-nav button').forEach(el => el.classList.remove('active'));
             document.getElementById('btn-' + dayId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0,0);
         }
 
         // Logika Widoków
