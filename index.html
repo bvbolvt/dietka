@@ -573,7 +573,7 @@
                 </div>
                 <div class="meal-card">
                     <div class="meal-header"><span class="meal-time">OBIAD</span><span class="meal-macros-top">K:780 B:68 T:20 W:80</span></div>
-                    <div class="meal-title">MAKARON PESTO</div>
+                    <div class="meal-title">MAKARON Z PESTO</div>
                     
                     <img src="cz2.png" class="meal-photo" alt="Obiad Czwartek">
 
@@ -1000,28 +1000,38 @@
             });
 
             // ----------------------------------------------------
-            // NOWE: OBSŁUGA GESTÓW SWIPE
+            // OBSŁUGA GESTÓW SWIPE (Z POPRAWKĄ NA PRZEWIJANIE)
             // ----------------------------------------------------
             let touchStartX = 0;
+            let touchStartY = 0; // Dodano Y
             let touchEndX = 0;
+            let touchEndY = 0;   // Dodano Y
+            
             const daysOrder = ['pon', 'wt', 'sr', 'czw', 'pt', 'sob', 'nd'];
             const dietView = document.getElementById('view-diet');
 
             dietView.addEventListener('touchstart', e => {
                 touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
             }, {passive: true});
 
             dietView.addEventListener('touchend', e => {
                 touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
                 handleSwipe();
             }, {passive: true});
 
             function handleSwipe() {
                 const threshold = 50; // Minimalna długość przesunięcia w pikselach
-                const swipeDistance = touchEndX - touchStartX;
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
 
-                // Sprawdź czy przesunięcie było wystarczająco długie
-                if (Math.abs(swipeDistance) < threshold) return;
+                // 1. Sprawdź, czy przesunięcie było wystarczająco długie w poziomie
+                if (Math.abs(diffX) < threshold) return;
+
+                // 2. WAŻNE: Sprawdź, czy ruch był bardziej poziomy niż pionowy
+                // Jeśli przesunięcie Y jest większe niż X, to znaczy, że user scrolluje
+                if (Math.abs(diffY) > Math.abs(diffX)) return;
 
                 // Znajdź aktualny dzień
                 const currentDayBtn = document.querySelector('.days-nav button.active');
@@ -1030,7 +1040,7 @@
                 const currentId = currentDayBtn.id.replace('btn-', '');
                 const currentIndex = daysOrder.indexOf(currentId);
 
-                if (swipeDistance > 0) {
+                if (diffX > 0) {
                     // Przesunięcie w PRAWO -> Poprzedni dzień
                     if (currentIndex > 0) {
                         openDay(daysOrder[currentIndex - 1]);
